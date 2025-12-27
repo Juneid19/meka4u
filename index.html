@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>iframe tester</title>
+    <link rel="stylesheet" href="https://public.codepenassets.com/css/reset-2.0.min.css">
+
+
+  </head>
+    
+  <body>
+  <!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>MEKARINDAH - Vinyl Player</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-color: #ff00ff;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e); /* Warna awal */
+            transition: background 2s ease; /* Transisi halus saat ganti warna */
+            overflow: hidden;
+        }
+
+        .player-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            width: 100%;
+            max-width: 380px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .vinyl-player {
+            position: relative;
+            width: 340px;
+            height: 340px;
+            background: linear-gradient(145deg, #2a2a3a, #1a1a2a);
+            border-radius: 20px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .outer-glow {
+            position: absolute;
+            width: 290px;
+            height: 290px;
+            border-radius: 50%;
+            border: 2px solid var(--neon-color);
+            opacity: 0.4;
+            animation: outerPulse 3s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes outerPulse {
+            0%, 100% { transform: scale(1); opacity: 0.4; }
+            50% { transform: scale(1.06); opacity: 0.15; }
+        }
+
+        .vinyl-disc {
+            position: relative;
+            width: 270px;
+            height: 270px;
+            border-radius: 50%;
+            background: repeating-radial-gradient(circle at center, #0a0a0a 0px, #0a0a0a 1px, #151515 1px, #151515 2px, #0a0a0a 2px, #0a0a0a 3px, #1a1a1a 3px, #1a1a1a 4px);
+            box-shadow: 0 0 0 4px #080808, 0 0 0 6px #2a2a2a, 0 15px 40px rgba(0,0,0,0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* KECEPATAN PUTARAN: Ganti 6s ke angka lain jika ingin lebih cepat/lambat */
+        .vinyl-disc.spinning { animation: spin 6s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        .cover-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 5;
+        }
+
+        .neon-glow {
+            position: absolute;
+            width: 215px;
+            height: 215px;
+            border-radius: 50%;
+            background: conic-gradient(var(--neon-color), #00ffff, #00ff99, #ff00ff, var(--neon-color));
+            animation: rotateGlow 8s linear infinite, pulseGlow 2s ease-in-out infinite alternate;
+            filter: blur(10px);
+            opacity: 0.7;
+            z-index: 1;
+        }
+
+        @keyframes rotateGlow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes pulseGlow { from { opacity: 0.5; transform: scale(1); } to { opacity: 0.9; transform: scale(1.05); } }
+
+        .cover-art {
+            width: 190px;
+            height: 190px;
+            border-radius: 50%;
+            z-index: 2;
+            box-shadow: 0 0 25px rgba(0,0,0,0.8);
+            background: #333;
+            background-size: cover;
+            background-position: center;
+            transition: background-image 0.8s ease;
+        }
+
+        .center-hole {
+            position: absolute; width: 12px; height: 12px;
+            background: radial-gradient(circle, #555 0%, #222 60%, #111 100%);
+            border-radius: 50%; z-index: 10;
+        }
+
+        .tone-arm {
+            position: absolute; top: 20px; right: 15px; width: 100px; height: 16px;
+            transform-origin: right center; transform: rotate(-40deg);
+            transition: transform 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55); z-index: 20;
+        }
+        .tone-arm.playing { transform: rotate(-12deg); }
+
+        .tone-arm-base {
+            position: absolute; right: -10px; top: -12px; width: 38px; height: 38px;
+            background: radial-gradient(circle at 35% 35%, #666 0%, #333 50%, #1a1a1a 100%);
+            border-radius: 50%;
+        }
+        .tone-arm-bar {
+            position: absolute; right: 6px; top: 4px; width: 82px; height: 7px;
+            background: linear-gradient(to bottom, #888 0%, #555 50%, #333 100%); border-radius: 3px;
+        }
+
+        .station-info { margin-top: 25px; text-align: center; color: #fff; width: 100%; }
+        .station-name {
+            font-size: 1.6em; font-weight: 700;
+            background: linear-gradient(135deg, #fff 0%, var(--neon-color) 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 10px; letter-spacing: 1px;
+        }
+
+        .song-info {
+            background: rgba(0,0,0,0.3); padding: 15px; border-radius: 20px;
+            backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);
+            min-height: 85px; display: flex; flex-direction: column;
+            justify-content: center; overflow: hidden; position: relative;
+        }
+
+        .song-title { font-size: 1.1em; font-weight: 600; white-space: nowrap; display: block; margin-bottom: 4px; }
+        .song-title.scroll { animation: marquee 12s linear infinite; display: inline-block; padding-left: 100%; }
+        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+
+        .song-artist { font-size: 0.85em; color: rgba(255,255,255,0.7); }
+
+        .controls { display: flex; align-items: center; gap: 15px; margin-top: 20px; justify-content: center; }
+        .play-btn {
+            width: 65px; height: 65px; border-radius: 50%; border: none;
+            background: linear-gradient(145deg, var(--neon-color), #7700aa);
+            cursor: pointer; display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 6px 20px rgba(255,0,255,0.4); transition: 0.3s;
+        }
+        .play-btn:active { transform: scale(0.95); }
+        .play-btn svg { width: 26px; height: 26px; fill: #fff; }
+
+        .volume-slider {
+            -webkit-appearance: none; width: 80px; height: 4px;
+            background: rgba(255,255,255,0.2); border-radius: 2px;
+        }
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none; width: 14px; height: 14px;
+            background: var(--neon-color); border-radius: 50%; cursor: pointer;
+        }
+
+        .status { margin-top: 15px; font-size: 0.75em; color: rgba(255,255,255,0.5); display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #444; }
+        .status-dot.live { background: #00ff88; box-shadow: 0 0 10px #00ff88; animation: blink 1.5s infinite; }
+        @keyframes blink { 50% { opacity: 0.3; } }
+
+        /* CREDIT STYLE (ITALIC) */
+        .credit {
+            position: fixed; bottom: 10px; right: 15px; font-size: 11px;
+            color: rgba(255,255,255,0.4); font-style: italic; z-index: 100;
+        }
+
+        .particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; }
+        .particle { position: absolute; background: var(--neon-color); border-radius: 50%; opacity: 0.2; }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+
+    <div class="player-container">
+        <div class="vinyl-player">
+            <div class="outer-glow" id="outerGlow"></div>
+            <div class="vinyl-disc" id="vinylDisc">
+                <div class="cover-container">
+                    <div class="neon-glow"></div>
+                    <div class="cover-art" id="coverArt"></div>
+                    <div class="center-hole"></div>
+                </div>
+            </div>
+            <div class="tone-arm" id="toneArm">
+                <div class="tone-arm-base"></div>
+                <div class="tone-arm-bar"></div>
+            </div>
+        </div>
+
+        <div class="station-info">
+            <h1 class="station-name">MEKARINDAH</h1>
+            <div class="song-info">
+                <div id="titleContainer" style="overflow:hidden; width:100%;">
+                    <span class="song-title" id="songTitle">Menghubungkan...</span>
+                </div>
+                <div class="song-artist" id="songArtist">Mohon tunggu</div>
+            </div>
+
+            <div class="controls">
+                <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="80">
+                <button class="play-btn" id="playBtn">
+                    <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                </button>
+            </div>
+
+            <div class="status">
+                <div class="status-dot" id="statusDot"></div>
+                <span id="statusText">Siap diputar</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="credit">Prepred by Juneid</div>
+
+    <audio id="audioPlayer" crossorigin="anonymous"></audio>
+
+    <script>
+        const CONFIG = {
+            streamUrl: "https://stream.zeno.fm/d2k0ptw4kkeuv",
+            metadataUrl: "https://api.zeno.fm/mounts/metadata/subscribe/gkvbmtw4kkeuv",
+            defaultCover: "https://picsum.photos/300/300?grayscale"
+        };
+
+        // Daftar Gradient Background untuk Auto-Rotate
+        const bgColors = [
+            'linear-gradient(135deg, #1a1a2e, #16213e)',
+            'linear-gradient(135deg, #2c3e50, #000000)',
+            'linear-gradient(135deg, #6a11cb, #2575fc)',
+            'linear-gradient(135deg, #0f2027, #203a43, #2c5364)',
+            'linear-gradient(135deg, #373b44, #4286f4)'
+        ];
+
+        const RECITER_COVERS = {
+            'mishary': 'https://i.ytimg.com/vi/GLMp_EGGLfk/hq720.jpg?sqp=-oaymwExCK4FEIIDSFryq4qpAyMIARUAAIhCGAHwAQH4AdQGgALgA4oCDAgAEAEYciBWKDgwDw==&rs=AOn4CLAa_DZgLB8D4xcMTFPgxpnQghg_sw',
+            'abdul': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT99qAcwhSDEUMmxHHzjEfna9YVgtg-04A8rDvXbaNtZf-70ZkRxFPl_i5J_he-DnfdtO7EhS0ouUaiu-hq_bE8Ni9U3xKBjsAdFgzAg4w&s=10',
+            'adi hidayat': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQi7cw0cL0cs4aqyXA5sbBMBaCWGmW0D28pzruJKEWXlx9RYeQLuZouy9VlqLk9oWvOxlO7jHAh6QOXhjPyKPQZqz2rez4YV5XOPrgTTQ&s=10',
+            'zainuddin': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSDo4WarU6dxMHRx3BFqisexu4euGqv9Ni9_JZA5jZBwA&s=10',
+            'latif': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQSgeut2z_VzZzl5_B7sbcdxL2FkG3Rd3dOTaS3WCOXEA&s=10',
+            'al sudais': 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Abdulrahman_Al-Sudais.jpg/440px-Abdulrahman_Al-Sudais.jpg',
+            'ghamdi': 'https://i.ibb.co/Wp0y1hG/ghamdi.jpg',
+            'shatri': 'https://i.ibb.co/fQ5N204/shatri.jpg',
+            'abdul basit': 'https://i.ibb.co/RzM805h/abdulbasit.jpg',
+};
+
+        const audio = document.getElementById("audioPlayer");
+        const playBtn = document.getElementById("playBtn");
+        const songTitle = document.getElementById("songTitle");
+        const songArtist = document.getElementById("songArtist");
+        const coverArt = document.getElementById("coverArt");
+        const statusDot = document.getElementById("statusDot");
+        const statusText = document.getElementById("statusText");
+
+        let isPlaying = false;
+        let currentTrack = "";
+        let colorIndex = 0;
+
+        // --- 1. FITUR AUTO ROTATE BACKGROUND (20 Detik) ---
+        function rotateBackground() {
+            colorIndex = (colorIndex + 1) % bgColors.length;
+            document.body.style.background = bgColors[colorIndex];
+        }
+        setInterval(rotateBackground, 20000);
+
+        // --- 2. MARQUEE LOGIC ---
+        function updateMarquee() {
+            const container = document.getElementById('titleContainer');
+            if (songTitle.scrollWidth > container.offsetWidth) {
+                songTitle.classList.add('scroll');
+            } else {
+                songTitle.classList.remove('scroll');
+            }
+        }
+
+        // --- 3. STABLE PLAY LOGIC ---
+        async function togglePlay() {
+            if (isPlaying) {
+                audio.pause();
+                audio.src = ""; // Clear buffer
+                isPlaying = false;
+                playBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
+                document.getElementById("vinylDisc").classList.remove("spinning");
+                document.getElementById("toneArm").classList.remove("playing");
+                statusDot.classList.remove("live");
+                statusText.textContent = "Dijeda";
+            } else {
+                statusText.textContent = "Menghubungkan...";
+                audio.src = CONFIG.streamUrl;
+                try {
+                    await audio.play();
+                    isPlaying = true;
+                    playBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
+                    document.getElementById("vinylDisc").classList.add("spinning");
+                    document.getElementById("toneArm").classList.add("playing");
+                    statusDot.classList.add("live");
+                    statusText.textContent = "Live • On Air";
+                } catch (e) {
+                    statusText.textContent = "Gagal memutar.";
+                }
+            }
+        }
+
+        // --- 4. METADATA & QORI LOCKING ---
+        function initMetadata() {
+            const es = new EventSource(CONFIG.metadataUrl);
+            es.onmessage = (e) => {
+                const data = JSON.parse(e.data);
+                if (data.streamTitle && data.streamTitle !== currentTrack) {
+                    currentTrack = data.streamTitle;
+                    processTrack(data.streamTitle);
+                }
+            };
+        }
+
+        async function processTrack(fullTitle) {
+            let artist = "MUARASIPONGI";
+            let title = fullTitle;
+            if (fullTitle.includes(" - ")) {
+                const parts = fullTitle.split(" - ");
+                artist = parts[0].trim();
+                title = parts[1].trim();
+            }
+            songTitle.textContent = title;
+            songArtist.textContent = artist;
+            updateMarquee();
+
+            // Cek Mapping Qori
+            const hay = (artist + " " + title).toLowerCase();
+            let found = false;
+            for (const key in RECITER_COVERS) {
+                if (hay.includes(key)) {
+                    coverArt.style.backgroundImage = `url('${RECITER_COVERS[key]}')`;
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                const search = await fetchCoverArt(artist, title);
+                coverArt.style.backgroundImage = `url('${search || CONFIG.defaultCover}')`;
+            }
+        }
+
+        async function fetchCoverArt(artist, title) {
+            try {
+                const q = encodeURIComponent(`${artist} ${title}`);
+                const res = await fetch(`https://itunes.apple.com/search?term=${q}&limit=1`);
+                const data = await res.json();
+                if (data.results.length > 0) return data.results[0].artworkUrl100.replace("100x100", "600x600");
+            } catch (e) {}
+            return null;
+        }
+
+        // --- 5. PARTICLES ---
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 15; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                p.style.width = p.style.height = Math.random() * 4 + 'px';
+                p.style.left = Math.random() * 100 + '%';
+                p.style.top = Math.random() * 100 + '%';
+                p.style.animation = `blink ${2 + Math.random() * 3}s infinite`;
+                container.appendChild(p);
+            }
+        }
+
+        playBtn.addEventListener("click", togglePlay);
+        document.getElementById("volumeSlider").oninput = (e) => audio.volume = e.target.value / 100;
+        createParticles();
+        initMetadata();
+        coverArt.style.backgroundImage = `url('${CONFIG.defaultCover}')`;
+    </script>
+</body>
+</html>
+    
+  </body>
+  
+</html>
